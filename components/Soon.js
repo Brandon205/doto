@@ -4,7 +4,7 @@ import { View, Text } from 'react-native'
 export default function Soon() {
     return (
         <View>
-            <Text>Soon</Text>
+            <Text>Soon component</Text>
         </View>
     )
 }
