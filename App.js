@@ -1,23 +1,33 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NativeRouter, Route, Link } from 'react-router-native';
 import Soon from './components/Soon';
 import Later from './components/Later';
 
-const Stack = createNativeStackNavigator();
-
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Soon">
-        <Stack.Screen name="Soon" component={Soon} />
-        <Stack.Screen name="Later" component={Later} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <NativeRouter>
+      <View>
+        <View>
+        <Link to="/" underlayColor="#f0f4f7" style={styles.navItem}>
+          <Text>Home</Text>
+        </Link>
+        </View>
+
+        <Route exact path='/' component={Soon} />
+        <Route exact path='/Later' component={Later} />
+      </View>
+    </NativeRouter>
   );
 }
 
 const styles = StyleSheet.create({
-  
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  navItem: {
+    textAlign: 'center'
+  }
 });
