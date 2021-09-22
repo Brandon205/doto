@@ -6,7 +6,7 @@ const fakeData = [
         id: 1,
         title: 'Oil Change',
         desc: 'Call 23400683010',
-        createdOt: '9/21/21',
+        createdOn: '9/21/21',
         due: '9/21/21'
     },
     {
