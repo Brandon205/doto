@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const fakeData = [
+const fakeData = [ 
     {
         id: 1,
         title: 'Oil Change',
@@ -48,7 +48,6 @@ export default function Soon() {
     const getData = async () => {
         try {
             let jsonValue = await AsyncStorage.getItem('testingData')
-            // console.log(jsonValue)
             if (jsonValue !== null) {
                 setData(JSON.parse(jsonValue))
             }
