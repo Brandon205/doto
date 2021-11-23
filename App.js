@@ -1,23 +1,22 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { NativeRouter, Route, Link } from 'react-router-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Soon from './components/Soon';
 import Later from './components/Later';
+import Eventually from './components/Eventually';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NativeRouter>
-      <View>
-        <View>
-        <Link to="/" underlayColor="#f0f4f7" style={styles.navItem}>
-          <Text>Home</Text>
-        </Link>
-        </View>
-
-        <Route exact path='/' component={Soon} />
-        <Route exact path='/Later' component={Later} />
-      </View>
-    </NativeRouter>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={Soon} options={{ title: 'Soon' }} />
+        <Stack.Screen name="Later" component={Later} options={{ title: 'Later' }} />
+        <Stack.Screen name="Eventually" component={Eventually} options={{ title: 'Eventually' }} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 

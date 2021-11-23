@@ -8,14 +8,14 @@ const fakeData = [
         title: 'Oil Change',
         desc: 'Call 23400683010',
         createdOn: '9/21/21',
-        due: '9/21/21'
+        complete: true
     },
     {
         id: 2,
         title: 'Call for Guitar',
         desc: 'See if they can fix it',
         createdOn: '9/21/21',
-        due: '9/21/21'
+        complete: true
     }
 ]
 
@@ -31,7 +31,7 @@ export default function Soon() {
             <View>
                 <Text>{item.title}</Text>
                 <Text>{item.desc}</Text>
-                <Text>{item.due}</Text>
+                <Text>{item.createdOn}</Text>
             </View>
         )
     }
