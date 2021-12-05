@@ -49,7 +49,6 @@ export default function TaskRenderer() { // Renders buttons to change the type o
             tempJson = JSON.stringify(dataCopy)
         }
         try {
-            console.log(tempJson)
             await AsyncStorage.setItem(taskType, tempJson)
         } catch (error) {
             console.log(error)
@@ -71,7 +70,6 @@ export default function TaskRenderer() { // Renders buttons to change the type o
     const getAllData = async () => {
         try {
             let soonValue = await AsyncStorage.getItem('@soon')
-            console.log(soonValue)
             if (soonValue !== null) {
                 console.log(soonValue)
                 setSoonData(JSON.parse(soonValue))
@@ -84,9 +82,6 @@ export default function TaskRenderer() { // Renders buttons to change the type o
             if (eventuallyValue !== null) {
                 setEventuallyData(JSON.parse(eventuallyValue))
             }
-            console.log(typeof(soonData), soonData)
-            console.log(typeof(laterData), laterData)
-            console.log(typeof(eventuallyData), eventuallyData)
         } catch (error) {
             console.log(error)
         }
