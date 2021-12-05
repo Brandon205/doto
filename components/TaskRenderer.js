@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Dimensions, Modal, TextInput, Pressable, FlatList } from 'react-native';
+import 'react-native-get-random-values';
 import { v4 as uuid } from 'uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -16,7 +17,7 @@ export default function TaskRenderer() { // Renders buttons to change the type o
 
     useEffect(() => {
         getAllData()
-        if (taskType === "Soon") {
+        if (taskType === 'Soon') {
             setCurrentData(soonData)
         } else if (taskType === 'Later') {
             setCurrentData(laterData)
@@ -37,7 +38,7 @@ export default function TaskRenderer() { // Renders buttons to change the type o
 
     const addItem= async () => {
         let tempJson;
-        if (taskType === "Soon") {
+        if (taskType === 'Soon') {
             let dataCopy = soonData.push({id: uuid(), title: title, desc: desc, createdOn: Date(), complete: false})
             tempJson = JSON.stringify(dataCopy)
         } else if (taskType === 'Later') {
@@ -48,6 +49,7 @@ export default function TaskRenderer() { // Renders buttons to change the type o
             tempJson = JSON.stringify(dataCopy)
         }
         try {
+            console.log(tempJson)
             await AsyncStorage.setItem(taskType, tempJson)
         } catch (error) {
             console.log(error)
@@ -58,7 +60,7 @@ export default function TaskRenderer() { // Renders buttons to change the type o
         // copy the current list of items, then remove the one at the index that has a matching id to the one passed in, then update the stored list with the copied and modified one
         //TODO: REMOVE THE BELOW TEMPORARY CODE
         try {
-            await AsyncStorage.removeItem('Soon')
+            await AsyncStorage.removeItem('@' + taskType)
         } catch(error) {
             console.log(error)
         }
@@ -68,16 +70,17 @@ export default function TaskRenderer() { // Renders buttons to change the type o
 
     const getAllData = async () => {
         try {
-            let soonValue = await AsyncStorage.getItem('Soon')
+            let soonValue = await AsyncStorage.getItem('@soon')
+            console.log(soonValue)
             if (soonValue !== null) {
                 console.log(soonValue)
                 setSoonData(JSON.parse(soonValue))
             }
-            let laterValue = await AsyncStorage.getItem('Later')
+            let laterValue = await AsyncStorage.getItem('@later')
             if (laterValue !== null) {
                 setLaterData(JSON.parse(laterValue))
             }
-            let eventuallyValue = await AsyncStorage.getItem('Eventually')
+            let eventuallyValue = await AsyncStorage.getItem('@eventually')
             if (eventuallyValue !== null) {
                 setEventuallyData(JSON.parse(eventuallyValue))
             }
@@ -122,9 +125,8 @@ const styles = StyleSheet.create({
         display: 'flex',
         backgroundColor: 'whitesmoke',
         width: Dimensions.get("window").width,
-        height: Dimensions.get("window").height,
+        // height: Dimensions.get("window").height,
         alignItems: 'center',
-        width: '1000'
     },
     inline: {
         display: 'flex',
