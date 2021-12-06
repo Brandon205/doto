@@ -42,7 +42,7 @@ export default function TaskRenderer() { // Renders buttons to change the type o
             let dataCopy = soonData.push({id: uuid(), title: title, desc: desc, createdOn: Date(), complete: false})
             tempJson = JSON.stringify(dataCopy)
         } else if (taskType === 'Later') {
-            let dataCopy = laterData.push({id: uuid(), title: title, desc: desc, createdOn: Date(), complete: false})
+            let dataCopy = laterData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
         } else if (taskType === 'Eventually') {
             let dataCopy = eventuallyData.push({id: uuid(), title: title, desc: desc, createdOn: Date(), complete: false})
@@ -115,7 +115,7 @@ export default function TaskRenderer() { // Renders buttons to change the type o
     )
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ // #646EE for delete/edit buttons on cards
     container: {
         display: 'flex',
         backgroundColor: 'whitesmoke',
