@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Button, Dimensions, Modal, TextInput, Pressable
 import 'react-native-get-random-values';
 import { v4 as uuid } from 'uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
 export default function TaskRenderer() { // Renders buttons to change the type of task that is shown/being edited
@@ -17,35 +18,39 @@ export default function TaskRenderer() { // Renders buttons to change the type o
 
     useEffect(() => {
         getAllData()
-        if (taskType === 'Soon') {
+        if (taskType === 'soon') {
             setCurrentData(soonData)
-        } else if (taskType === 'Later') {
+        } else if (taskType === 'later') {
             setCurrentData(laterData)
-        } else if (taskType === 'Eventually') {
+        } else if (taskType === 'eventually') {
             setCurrentData(eventuallyData)
         }
     }, [soonData, laterData, eventuallyData, taskType])
 
     const renderItem = ({ item }) => {
         return (
-            <View>
-                <Text>{item.title}</Text>
-                <Text>{item.desc}</Text>
-                <Text>{item.createdOn}</Text>
+            <View style={styles.card}>
+                <Text style={styles.cardTitle}>{item.title}</Text>
+                <Text style={styles.cardDescs}>{item.desc}</Text>
+                <Text style={styles.cardDate }>{item.createdOn}</Text>
+                <View style={styles.editButtons}>
+                    <Icon name="edit" style={styles.icon} size={25} color="#6C48EF" onPress={() => editItem(item.id)} />
+                    <Icon name="delete" style={styles.icon} size={25} color="#6C48EF" onPress={() => console.log('Working')} />
+                </View>
             </View>
         )
     }
 
     const addItem= async () => {
         let tempJson;
-        if (taskType === 'Soon') {
-            let dataCopy = soonData.push({id: uuid(), title: title, desc: desc, createdOn: Date(), complete: false})
+        if (taskType === 'soon') {
+            let dataCopy = soonData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
-        } else if (taskType === 'Later') {
+        } else if (taskType === 'later') {
             let dataCopy = laterData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
-        } else if (taskType === 'Eventually') {
-            let dataCopy = eventuallyData.push({id: uuid(), title: title, desc: desc, createdOn: Date(), complete: false})
+        } else if (taskType === 'eventually') {
+            let dataCopy = eventuallyData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
         }
         try {
@@ -55,16 +60,23 @@ export default function TaskRenderer() { // Renders buttons to change the type o
         }
     }
 
+    let editItem = async (id) => {
+        // pull up a new edit modal, note the passed in id to find the index in the current list (based on current taskType),
+        // use the index and .splice() to remove and add in (3rd argument) the new data with the same id 
+    }
+
     let removeItem = async (id) => {
-        // copy the current list of items, then remove the one at the index that has a matching id to the one passed in, then update the stored list with the copied and modified one
+        // copy the current list of items based on the taskType, then remove the one at the index that has a matching id,
+        // then update the stored list with the copied and modified one
+
         //TODO: REMOVE THE BELOW TEMPORARY CODE
-        try {
-            await AsyncStorage.removeItem('@' + taskType)
-        } catch(error) {
-            console.log(error)
-        }
-        console.log('done')
-        getAllData()
+        // try {
+        //     await AsyncStorage.removeItem('@' + taskType)
+        // } catch(error) {
+        //     console.log(error)
+        // }
+        // console.log('done')
+        // getAllData()
     }
 
     const getAllData = async () => {
@@ -90,14 +102,14 @@ export default function TaskRenderer() { // Renders buttons to change the type o
     return (
         <View style={styles.container}>
             <View style={styles.inline}>
-                <Button title="Soon" onPress={() => setTaskType("Soon")} color={taskType === "Soon" ? 'green' : 'blue'} />
-                <Button title="Later" onPress={() => setTaskType("Later")} color={taskType === "Later" ? 'green' : 'blue'} />
-                <Button title="Eventually" onPress={() => setTaskType("Eventually")} color={taskType === "Eventually" ? 'green' : 'blue'} />
+                <Button title="Soon" onPress={() => setTaskType("Soon")} color={taskType === "soon" ? 'green' : 'blue'} />
+                <Button title="Later" onPress={() => setTaskType("Later")} color={taskType === "later" ? 'green' : 'blue'} />
+                <Button title="Eventually" onPress={() => setTaskType("Eventually")} color={taskType === "eventually" ? 'green' : 'blue'} />
             </View>
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(!modalVisible)} >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Text>Add a new {taskType} item here</Text>
+                        <Text>Add a new {taskType} task here</Text>
                         <TextInput value={title} onChangeText={onChangeTitle} placeholder="Task name" style={styles.input} />
                         <TextInput value={desc} onChangeText={onChangeDesc} placeholder="Task Description" style={styles.input} />
                         <Button title="Add Item" onPress={() => {addItem(); setModalVisible(!modalVisible)}} />
@@ -120,7 +132,6 @@ const styles = StyleSheet.create({ // #646EE for delete/edit buttons on cards
         display: 'flex',
         backgroundColor: 'whitesmoke',
         width: Dimensions.get("window").width,
-        // height: Dimensions.get("window").height,
         alignItems: 'center',
     },
     inline: {
@@ -163,4 +174,43 @@ const styles = StyleSheet.create({ // #646EE for delete/edit buttons on cards
         color: 'white',
         marginTop: 10
     },
+    card: {
+        backgroundColor: 'white',
+        flex: 1,
+        padding: 20,
+        boxShadow: '1px 1px 6px gray;',
+        borderRadius: 15,
+        marginVertical: 8,
+        marginHorizontal: 8,
+        minWidth: 200
+
+    },
+    cardTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10
+    },
+    cardDesc: {
+        fontSize: '1.1em'
+    },  
+    cardDate: {
+        color: 'gray',
+        fontWeight: '350',
+        fontDecoration: 'italicized',
+        fontSize: '0.8em',
+        marginTop: 5,
+        marginBottom: 15,
+    },
+    icon: {
+        display: 'flex',
+        flex: 1,
+        justifyContent: 'center',
+        color: '#6C48EF'
+    },
+    editButtons: {
+        display: 'flex',
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+    }
 })
