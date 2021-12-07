@@ -9,12 +9,15 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 export default function TaskRenderer() { // Renders buttons to change the type of task that is shown/being edited
     const [taskType, setTaskType] = useState('soon');
     const [modalVisible, setModalVisible] = useState(false);
+    const [editModalVisible, setEditModalVisible] = useState(false);
     const [currentData, setCurrentData] = useState([]);
     const [soonData, setSoonData] = useState([]);
     const [laterData, setLaterData] = useState([]);
     const [eventuallyData, setEventuallyData] = useState([]);
     const [title, onChangeTitle] = useState("");
     const [desc, onChangeDesc] = useState("");
+    const [editTitle, onChangeEditTitle] = useState("");
+    const [editDesc, onChangeEditDesc] = useState("");
 
     useEffect(() => {
         getAllData()
@@ -34,7 +37,7 @@ export default function TaskRenderer() { // Renders buttons to change the type o
                 <Text style={styles.cardDescs}>{item.desc}</Text>
                 <Text style={styles.cardDate }>{item.createdOn}</Text>
                 <View style={styles.editButtons}>
-                    <Icon name="edit" style={styles.icon} size={25} color="#6C48EF" onPress={() => editItem(item.id)} />
+                    <Icon name="edit" style={styles.icon} size={25} color="#6C48EF" onPress={() => { editItem(item.id); setEditModalVisible(true) } } />
                     <Icon name="delete" style={styles.icon} size={25} color="#6C48EF" onPress={() => console.log('Working')} />
                 </View>
             </View>
@@ -62,7 +65,18 @@ export default function TaskRenderer() { // Renders buttons to change the type o
 
     let editItem = async (id) => {
         // pull up a new edit modal, note the passed in id to find the index in the current list (based on current taskType),
-        // use the index and .splice() to remove and add in (3rd argument) the new data with the same id 
+        // use the index and .splice() to remove and add in (3rd argument) the new data with the same id
+        // if (taskType === 'soon') {
+
+        // } else if (taskType === 'later') {
+
+        // } else if (taskType === 'eventually') {
+
+        // }
+
+        for (let i = 0; i < (taskType + "Data").length; i++) {
+            (taskType + "Data").
+        }
     }
 
     let removeItem = async (id) => {
@@ -111,9 +125,22 @@ export default function TaskRenderer() { // Renders buttons to change the type o
                     <View style={styles.modalView}>
                         <Text>Add a new {taskType} task here</Text>
                         <TextInput value={title} onChangeText={onChangeTitle} placeholder="Task name" style={styles.input} />
-                        <TextInput value={desc} onChangeText={onChangeDesc} placeholder="Task Description" style={styles.input} />
+                        <TextInput value={desc} onChangeText={onChangeDesc} placeholder="Task description" style={styles.input} />
                         <Button title="Add Item" onPress={() => {addItem(); setModalVisible(!modalVisible)}} />
                         <Pressable style={[styles.button, styles.buttonClose]} onPress={() => setModalVisible(!modalVisible)}>
+                            <Text style={styles.textStyle}>Close</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </Modal>
+            <Modal animationType="slide" transparent={true} visible={editModalVisible} onRequestClose={() => setEditModalVisible(!editModalVisible)} >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text>Edit the task here</Text>
+                        <TextInput value={editTitle} onChangeText={onChangeEditTitle} placeholder="Task name" style={styles.input} />
+                        <TextInput value={editDesc} onChangeText={onChangeEditDesc} placeholder="Task description" style={styles.input} />
+                        <Button title="Save Item" onPress={() => {editItem(); setEditModalVisible(!editModalVisible)}} />
+                        <Pressable style={[styles.button, styles.buttonClose]} onPress={() => setEditModalVisible(!editModalVisible)}>
                             <Text style={styles.textStyle}>Close</Text>
                         </Pressable>
                     </View>
