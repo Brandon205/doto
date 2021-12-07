@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
 export default function TaskRenderer() { // Renders buttons to change the type of task that is shown/being edited
-    const [taskType, setTaskType] = useState('Soon');
+    const [taskType, setTaskType] = useState('soon');
     const [modalVisible, setModalVisible] = useState(false);
     const [currentData, setCurrentData] = useState([]);
     const [soonData, setSoonData] = useState([]);
@@ -102,9 +102,9 @@ export default function TaskRenderer() { // Renders buttons to change the type o
     return (
         <View style={styles.container}>
             <View style={styles.inline}>
-                <Button title="Soon" onPress={() => setTaskType("Soon")} color={taskType === "soon" ? 'green' : 'blue'} />
-                <Button title="Later" onPress={() => setTaskType("Later")} color={taskType === "later" ? 'green' : 'blue'} />
-                <Button title="Eventually" onPress={() => setTaskType("Eventually")} color={taskType === "eventually" ? 'green' : 'blue'} />
+                <Button title="Soon" onPress={() => setTaskType("soon")} color={taskType === "soon" ? 'green' : 'blue'} />
+                <Button title="Later" onPress={() => setTaskType("later")} color={taskType === "later" ? 'green' : 'blue'} />
+                <Button title="Eventually" onPress={() => setTaskType("eventually")} color={taskType === "eventually" ? 'green' : 'blue'} />
             </View>
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(!modalVisible)} >
                 <View style={styles.centeredView}>
