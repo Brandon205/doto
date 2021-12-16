@@ -80,14 +80,21 @@ export default function TaskRenderer() { // Renders buttons to change the type o
 
         for (let i = 0; i < tempList.length; i++) {
             if (tempList[i][1].id === id) {
-                console.log('hello')
+                console.log('Getting rid of ' + tempList[i][1].title)
                 tempList.splice(i, 1)
             }
         }
         tempList = Object.fromEntries(tempList)
-
-        console.log(tempList)
         setCurrentData(tempList)
+        tempList = JSON.stringify(tempList)
+
+        console.log(typeof(tempList))
+
+        try {
+            await AsyncStorage.removeItem('@' + taskType)
+        } catch(error) {
+            console.log(error)
+        }
 
         try {
             await AsyncStorage.setItem(taskType, tempList)
@@ -98,11 +105,6 @@ export default function TaskRenderer() { // Renders buttons to change the type o
         getAllData()
         
         //TODO: REMOVE THE BELOW TEMPORARY CODE
-        // try {
-        //     await AsyncStorage.removeItem('@' + taskType)
-        // } catch(error) {
-        //     console.log(error)
-        // }
         // console.log('done')
         // getAllData()
     }
