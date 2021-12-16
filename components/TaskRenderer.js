@@ -14,8 +14,8 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
     const [soonData, setSoonData] = useState([]);
     const [laterData, setLaterData] = useState([]);
     const [eventuallyData, setEventuallyData] = useState([]);
-    const [title, onChangeTitle] = useState("");
-    const [desc, onChangeDesc] = useState("");
+    const [title, onChangeTitle] = useState("Testing");
+    const [desc, onChangeDesc] = useState("Testing");
     const [editTitle, onChangeEditTitle] = useState("");
     const [editDesc, onChangeEditDesc] = useState("");
     const [editId, setEditId] = useState("");
@@ -29,7 +29,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         } else if (taskType === 'eventually') {
             setCurrentData(eventuallyData)
         }
-    }, [soonData, laterData, eventuallyData, taskType])
+    }, [soonData, laterData, eventuallyData, currentData, taskType])
 
     const renderItem = ({ item }) => { // For the FlatList component that renders each of the tasks based on what is in state (currentData)
         return (
@@ -50,6 +50,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         if (taskType === 'soon') {
             let dataCopy = soonData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
+            console.log(soonData, "DATACOPY")
         } else if (taskType === 'later') {
             let dataCopy = laterData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
@@ -57,6 +58,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
             let dataCopy = eventuallyData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
         }
+        // TODO: clear the textInput's states
         try {
             await AsyncStorage.setItem(taskType, tempJson)
         } catch (error) {
@@ -70,15 +72,13 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
 
     let removeItem = async (id) => { // Copy the current list of items based on the taskType, then remove the one at the index that has a matching id, then update the stored list with the copied and modified one
         let tempList = [...currentData]
-        tempList = Object.entries(tempList)
 
         for (let i = 0; i < tempList.length; i++) { // Loops through a copy of currentData and deletes the one that has the same id as the one that needs to be deleted
-            if (tempList[i][1].id === id) {
-                console.log('Getting rid of ' + tempList[i][1].title)
+            if (tempList[i].id === id) {
+                console.log('Getting rid of ' + tempList[i].title)
                 tempList.splice(i, 1)
             }
         }
-        tempList = Object.fromEntries(tempList)
         setCurrentData(tempList)
         
         switch (taskType) { // Used to update the data that the UseEffect hook will be setting to the currentData when the screens are changed
@@ -93,6 +93,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                 break;
             default:
                 console.log('Error setting state');
+                break;
         }
 
         tempList = JSON.stringify(tempList)
