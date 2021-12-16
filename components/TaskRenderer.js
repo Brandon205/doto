@@ -18,7 +18,6 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
     const [desc, onChangeDesc] = useState("Testing");
     const [editTitle, onChangeEditTitle] = useState("");
     const [editDesc, onChangeEditDesc] = useState("");
-    const [editId, setEditId] = useState("");
 
     useEffect(() => { // This will get all of the data at the start when the app is opened and whenever a user switches screens
         getAllData()
@@ -38,7 +37,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                 <Text style={styles.cardDescs}>{item.desc}</Text>
                 <Text style={styles.cardDate }>{item.createdOn}</Text>
                 <View style={styles.editButtons}>
-                    <Icon name="edit" style={styles.icon} size={25} color="#6C48EF" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); setEditId(item.id); } } />
+                    <Icon name="edit" style={styles.icon} size={25} color="#6C48EF" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); } } />
                     <Icon name="delete" style={styles.icon} size={25} color="#6C48EF" onPress={() => deleteTask(item.id)} />
                 </View>
             </View>
@@ -69,7 +68,6 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         let dataCopy = [...currentData]
         let removedIndex; // For editItem() keeps track of where to splice updated data back into
 
-
         for (let i = 0; i < dataCopy.length; i++) { // Loops through a copy of currentData and deletes the one that has the same itemId as the one that needs to be deleted
             if (dataCopy[i].id === itemId) {
                 console.log('Getting rid of ' + dataCopy[i].title) // TODO: Remove this
@@ -83,10 +81,46 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
 
     let editItem = async (itemId) => { // Use removeItem function(or the code from it? - TODO?), and then just add the item again with the same id and new details
 
+        // CURRENTLY THE REMOVEITEM() DOESN'T REMOVE ITEMS, ALSO THE new info is a function when it is added for some reason
+        let [tempList, index] = removeItem(itemId)
+        let newTitle = onChangeEditTitle
+        let newDesc = onChangeEditDesc
+        console.log(currentData, tempList)
+        let newData = {id: itemId, title: newTitle, desc: newDesc, createdOn: new Date().toDateString(), complete: false}
+        tempList.unshift({id: itemId, title: onChangeEditTitle, desc: onChangeEditDesc, createdOn: new Date().toDateString(), complete: false})
+        console.log(tempList, "AFTER EDIT DATA")
+        
+        //TODO clear editTitle and editDesc here
+
+        // Update the rest of the app with the new list of data
+        setCurrentData(tempList)
+        switch (taskType) { // Used to update the data that the UseEffect hook will be setting to the currentData when the screens are changed
+            case "soon":
+                setSoonData(tempList);
+                break;
+            case "later":
+                setLaterData(tempList);
+                break;
+            case "eventually":
+                setEventuallyData(tempList);
+                break;
+            default:
+                console.log('Error setting state');
+                break;
+        }
+
+        tempList = JSON.stringify(tempList)
+
+        try { // Update Async Storage
+            await AsyncStorage.setItem(taskType, tempList)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     let deleteTask = async (itemId) => { // Uses removeItem to get rid of the now deleted task, then updates the rest of the app with updated data (currentData, soon/later/eventuallyData, and AsyncStorage)
         let [tempList, index] = removeItem(itemId)
+        console.log(tempList)
         setCurrentData(tempList)
         
         switch (taskType) { // Used to update the data that the UseEffect hook will be setting to the currentData when the screens are changed
@@ -106,7 +140,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
 
         tempList = JSON.stringify(tempList)
 
-        try {
+        try { // Update Async Storage
             await AsyncStorage.setItem(taskType, tempList)
         } catch (error) {
             console.log(error)
