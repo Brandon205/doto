@@ -39,7 +39,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                 <Text style={styles.cardDate }>{item.createdOn}</Text>
                 <View style={styles.editButtons}>
                     <Icon name="edit" style={styles.icon} size={25} color="#6C48EF" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); setEditId(item.id); } } />
-                    <Icon name="delete" style={styles.icon} size={25} color="#6C48EF" onPress={() => removeItem(item.id)} />
+                    <Icon name="delete" style={styles.icon} size={25} color="#6C48EF" onPress={() => deleteTask(item.id)} />
                 </View>
             </View>
         )
@@ -50,7 +50,6 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         if (taskType === 'soon') {
             let dataCopy = soonData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
-            console.log(soonData, "DATACOPY")
         } else if (taskType === 'later') {
             let dataCopy = laterData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
@@ -58,7 +57,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
             let dataCopy = eventuallyData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
         }
-        // TODO: clear the textInput's states
+        // TODO: clear the textInput's states here
         try {
             await AsyncStorage.setItem(taskType, tempJson)
         } catch (error) {
@@ -66,19 +65,28 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         }
     }
 
-    let editItem = async (id) => { // Use removeItem function(or the code from it? - TODO?), and then just add the item again with the same id and new details
+    let removeItem = (itemId) => { // Will use the currentData from state to remove one of the items based on the itemId that is passed in (used in editItem() and removeItem())
+        let dataCopy = [...currentData]
+        let removedIndex; // For editItem() keeps track of where to splice updated data back into
+
+
+        for (let i = 0; i < dataCopy.length; i++) { // Loops through a copy of currentData and deletes the one that has the same itemId as the one that needs to be deleted
+            if (dataCopy[i].id === itemId) {
+                console.log('Getting rid of ' + dataCopy[i].title) // TODO: Remove this
+                dataCopy.splice(i, 1)
+                removedIndex = i
+            }
+        }
+
+        return [dataCopy, removedIndex];
+    }
+
+    let editItem = async (itemId) => { // Use removeItem function(or the code from it? - TODO?), and then just add the item again with the same id and new details
 
     }
 
-    let removeItem = async (id) => { // Copy the current list of items based on the taskType, then remove the one at the index that has a matching id, then update the stored list with the copied and modified one
-        let tempList = [...currentData]
-
-        for (let i = 0; i < tempList.length; i++) { // Loops through a copy of currentData and deletes the one that has the same id as the one that needs to be deleted
-            if (tempList[i].id === id) {
-                console.log('Getting rid of ' + tempList[i].title)
-                tempList.splice(i, 1)
-            }
-        }
+    let deleteTask = async (itemId) => { // Uses removeItem to get rid of the now deleted task, then updates the rest of the app with updated data (currentData, soon/later/eventuallyData, and AsyncStorage)
+        let [tempList, index] = removeItem(itemId)
         setCurrentData(tempList)
         
         switch (taskType) { // Used to update the data that the UseEffect hook will be setting to the currentData when the screens are changed
@@ -161,7 +169,6 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
             <Text>Current {taskType} Tasks:</Text>
             <FlatList data={currentData} renderItem={renderItem} keyExtractor={(item) => item.id} />
             <Button title="Add new task" onPress={() => setModalVisible(!modalVisible)} />
-            <Button title="TEMP RESET" onPress={() => removeItem()} />
         </View>
     )
 }
