@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
-export default function TaskRenderer() { // Renders buttons to change the type of task that is shown/being edited
+export default function TaskRenderer() { // Renders the whole app and handles most of the app as well
     const [taskType, setTaskType] = useState('soon');
     const [modalVisible, setModalVisible] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
@@ -20,7 +20,7 @@ export default function TaskRenderer() { // Renders buttons to change the type o
     const [editDesc, onChangeEditDesc] = useState("");
     const [editId, setEditId] = useState("");
 
-    useEffect(() => {
+    useEffect(() => { // This will get all of the data at the start when the app is opened and whenever a user switches screens
         getAllData()
         if (taskType === 'soon') {
             setCurrentData(soonData)
@@ -31,7 +31,7 @@ export default function TaskRenderer() { // Renders buttons to change the type o
         }
     }, [soonData, laterData, eventuallyData, taskType])
 
-    const renderItem = ({ item }) => {
+    const renderItem = ({ item }) => { // For the FlatList component that renders each of the tasks based on what is in state (currentData)
         return (
             <View style={styles.card}>
                 <Text style={styles.cardTitle}>{item.title}</Text>
@@ -45,7 +45,7 @@ export default function TaskRenderer() { // Renders buttons to change the type o
         )
     }
 
-    const addItem= async () => {
+    const addItem= async () => { // Uses the data from the inputs that is stored in state to create a new task for the current taskType, and pushes that to Async storage
         let tempJson;
         if (taskType === 'soon') {
             let dataCopy = soonData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
@@ -64,21 +64,15 @@ export default function TaskRenderer() { // Renders buttons to change the type o
         }
     }
 
-    let editItem = async (id) => {
-        // use removeItem, and then just add the item again with the same id and new details
-
-
+    let editItem = async (id) => { // Use removeItem function(or the code from it? - TODO?), and then just add the item again with the same id and new details
 
     }
 
-    let removeItem = async (id) => {
-        // copy the current list of items based on the taskType, then remove the one at the index that has a matching id,
-        // then update the stored list with the copied and modified one
-
+    let removeItem = async (id) => { // Copy the current list of items based on the taskType, then remove the one at the index that has a matching id, then update the stored list with the copied and modified one
         let tempList = [...currentData]
         tempList = Object.entries(tempList)
 
-        for (let i = 0; i < tempList.length; i++) {
+        for (let i = 0; i < tempList.length; i++) { // Loops through a copy of currentData and deletes the one that has the same id as the one that needs to be deleted
             if (tempList[i][1].id === id) {
                 console.log('Getting rid of ' + tempList[i][1].title)
                 tempList.splice(i, 1)
@@ -86,30 +80,31 @@ export default function TaskRenderer() { // Renders buttons to change the type o
         }
         tempList = Object.fromEntries(tempList)
         setCurrentData(tempList)
-        tempList = JSON.stringify(tempList)
-
-        console.log(typeof(tempList))
-
-        try {
-            await AsyncStorage.removeItem('@' + taskType)
-        } catch(error) {
-            console.log(error)
+        
+        switch (taskType) { // Used to update the data that the UseEffect hook will be setting to the currentData when the screens are changed
+            case "soon":
+                setSoonData(tempList);
+                break;
+            case "later":
+                setLaterData(tempList);
+                break;
+            case "eventually":
+                setEventuallyData(tempList);
+                break;
+            default:
+                console.log('Error setting state');
         }
+
+        tempList = JSON.stringify(tempList)
 
         try {
             await AsyncStorage.setItem(taskType, tempList)
         } catch (error) {
             console.log(error)
         }
-
-        getAllData()
-        
-        //TODO: REMOVE THE BELOW TEMPORARY CODE
-        // console.log('done')
-        // getAllData()
     }
 
-    const getAllData = async () => {
+    const getAllData = async () => { // Used in the useEffect hook to make sure the data is updated and accurate
         try {
             let soonValue = await AsyncStorage.getItem('@soon')
             if (soonValue !== null) {
@@ -170,7 +165,7 @@ export default function TaskRenderer() { // Renders buttons to change the type o
     )
 }
 
-const styles = StyleSheet.create({ // #646EE for delete/edit buttons on cards
+const styles = StyleSheet.create({
     container: {
         display: 'flex',
         backgroundColor: 'whitesmoke',
