@@ -18,6 +18,7 @@ export default function TaskRenderer() { // Renders buttons to change the type o
     const [desc, onChangeDesc] = useState("");
     const [editTitle, onChangeEditTitle] = useState("");
     const [editDesc, onChangeEditDesc] = useState("");
+    const [editId, setEditId] = useState("");
 
     useEffect(() => {
         getAllData()
@@ -37,8 +38,8 @@ export default function TaskRenderer() { // Renders buttons to change the type o
                 <Text style={styles.cardDescs}>{item.desc}</Text>
                 <Text style={styles.cardDate }>{item.createdOn}</Text>
                 <View style={styles.editButtons}>
-                    <Icon name="edit" style={styles.icon} size={25} color="#6C48EF" onPress={() => { editItem(item.id); setEditModalVisible(true) } } />
-                    <Icon name="delete" style={styles.icon} size={25} color="#6C48EF" onPress={() => console.log('Working')} />
+                    <Icon name="edit" style={styles.icon} size={25} color="#6C48EF" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); setEditId(item.id); } } />
+                    <Icon name="delete" style={styles.icon} size={25} color="#6C48EF" onPress={() => removeItem(item.id)} />
                 </View>
             </View>
         )
@@ -64,25 +65,38 @@ export default function TaskRenderer() { // Renders buttons to change the type o
     }
 
     let editItem = async (id) => {
-        // pull up a new edit modal, note the passed in id to find the index in the current list (based on current taskType),
-        // use the index and .splice() to remove and add in (3rd argument) the new data with the same id
-        // if (taskType === 'soon') {
+        // use removeItem, and then just add the item again with the same id and new details
 
-        // } else if (taskType === 'later') {
 
-        // } else if (taskType === 'eventually') {
 
-        // }
-
-        for (let i = 0; i < (taskType + "Data").length; i++) {
-            (taskType + "Data").
-        }
     }
 
     let removeItem = async (id) => {
         // copy the current list of items based on the taskType, then remove the one at the index that has a matching id,
         // then update the stored list with the copied and modified one
 
+        let tempList = [...currentData]
+        tempList = Object.entries(tempList)
+
+        for (let i = 0; i < tempList.length; i++) {
+            if (tempList[i][1].id === id) {
+                console.log('hello')
+                tempList.splice(i, 1)
+            }
+        }
+        tempList = Object.fromEntries(tempList)
+
+        console.log(tempList)
+        setCurrentData(tempList)
+
+        try {
+            await AsyncStorage.setItem(taskType, tempList)
+        } catch (error) {
+            console.log(error)
+        }
+
+        getAllData()
+        
         //TODO: REMOVE THE BELOW TEMPORARY CODE
         // try {
         //     await AsyncStorage.removeItem('@' + taskType)
@@ -149,7 +163,7 @@ export default function TaskRenderer() { // Renders buttons to change the type o
             <Text>Current {taskType} Tasks:</Text>
             <FlatList data={currentData} renderItem={renderItem} keyExtractor={(item) => item.id} />
             <Button title="Add new task" onPress={() => setModalVisible(!modalVisible)} />
-            <Button title="TEMP REMOVE" onPress={() => removeItem()} />
+            <Button title="TEMP RESET" onPress={() => removeItem()} />
         </View>
     )
 }
