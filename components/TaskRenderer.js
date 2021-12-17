@@ -18,6 +18,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
     const [desc, onChangeDesc] = useState("Testing");
     const [editTitle, onChangeEditTitle] = useState("");
     const [editDesc, onChangeEditDesc] = useState("");
+    const [editId, setEditId] = useState("");
 
     useEffect(() => { // This will get all of the data at the start when the app is opened and whenever a user switches screens
         getAllData()
@@ -28,17 +29,18 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         } else if (taskType === 'eventually') {
             setCurrentData(eventuallyData)
         }
-    }, [soonData, laterData, eventuallyData, currentData, taskType])
+    }, [soonData, laterData, eventuallyData, taskType])
 
     const renderItem = ({ item }) => { // For the FlatList component that renders each of the tasks based on what is in state (currentData)
         return (
-            <View style={styles.card}>
+            <View style={[{backgroundColor: item.complete ? '#00ff129e' : 'white'}, styles.card]}>
                 <Text style={styles.cardTitle}>{item.title}</Text>
                 <Text style={styles.cardDescs}>{item.desc}</Text>
                 <Text style={styles.cardDate }>{item.createdOn}</Text>
                 <View style={styles.editButtons}>
-                    <Icon name="edit" style={styles.icon} size={25} color="#6C48EF" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); } } />
+                    <Icon name="edit" style={styles.icon} size={25} color="#6C48EF" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); setEditId(item.id) } } />
                     <Icon name="delete" style={styles.icon} size={25} color="#6C48EF" onPress={() => deleteTask(item.id)} />
+                    <Icon name="check" style={styles.icon} size={25} color="#6C48EF" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn)} />
                 </View>
             </View>
         )
@@ -56,7 +58,10 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
             let dataCopy = eventuallyData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
         }
-        // TODO: clear the textInput's states here
+
+        onChangeTitle("");
+        onChangeDesc("");
+
         try {
             await AsyncStorage.setItem(taskType, tempJson)
         } catch (error) {
@@ -70,7 +75,6 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
 
         for (let i = 0; i < dataCopy.length; i++) { // Loops through a copy of currentData and deletes the one that has the same itemId as the one that needs to be deleted
             if (dataCopy[i].id === itemId) {
-                console.log('Getting rid of ' + dataCopy[i].title) // TODO: Remove this
                 dataCopy.splice(i, 1)
                 removedIndex = i
             }
@@ -79,22 +83,17 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         return [dataCopy, removedIndex];
     }
 
-    let editItem = async (itemId) => { // Use removeItem function(or the code from it? - TODO?), and then just add the item again with the same id and new details
-
-        // CURRENTLY THE REMOVEITEM() DOESN'T REMOVE ITEMS, ALSO THE new info is a function when it is added for some reason
+    let editItem = async (itemId) => { // Use removeItem function, and then just add the item again with the same id and new details
         let [tempList, index] = removeItem(itemId)
-        let newTitle = onChangeEditTitle
-        let newDesc = onChangeEditDesc
-        console.log(currentData, tempList)
-        let newData = {id: itemId, title: newTitle, desc: newDesc, createdOn: new Date().toDateString(), complete: false}
-        tempList.unshift({id: itemId, title: onChangeEditTitle, desc: onChangeEditDesc, createdOn: new Date().toDateString(), complete: false})
-        console.log(tempList, "AFTER EDIT DATA")
+
+        tempList.splice(index, 0, {id: itemId, title: editTitle, desc: editDesc, createdOn: new Date().toDateString(), complete: false})
         
-        //TODO clear editTitle and editDesc here
+        // Clear editTitle and editDesc here
+        onChangeEditDesc("");
+        onChangeEditTitle("");
 
         // Update the rest of the app with the new list of data
-        setCurrentData(tempList)
-        switch (taskType) { // Used to update the data that the UseEffect hook will be setting to the currentData when the screens are changed
+        switch (taskType) { // Used to update the data that the useEffect hook will be setting to the currentData when the screens are changed
             case "soon":
                 setSoonData(tempList);
                 break;
@@ -119,11 +118,40 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
     }
 
     let deleteTask = async (itemId) => { // Uses removeItem to get rid of the now deleted task, then updates the rest of the app with updated data (currentData, soon/later/eventuallyData, and AsyncStorage)
-        let [tempList, index] = removeItem(itemId)
-        console.log(tempList)
+        let [tempList] = removeItem(itemId)
         setCurrentData(tempList)
         
         switch (taskType) { // Used to update the data that the UseEffect hook will be setting to the currentData when the screens are changed
+            case "soon":
+                setSoonData(tempList);
+                break;
+            case "later":
+                setLaterData(tempList);
+                break;
+            case "eventually":
+                setEventuallyData(tempList);
+                break;
+            default:
+                console.log('Error setting state');
+                break;
+        }
+
+        tempList = JSON.stringify(tempList)
+
+        try { // Update Async Storage
+            await AsyncStorage.setItem(taskType, tempList)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    let completeTask = async (itemId, itemTitle, itemDesc, createdDate, currentlyComplete) => { // Completes a task by using removeItem(), then adding that same item to the end of the list with completed: true     
+        let [tempList] = removeItem(itemId)
+
+        tempList.push({id: itemId, title: itemTitle, desc: itemDesc, createdOn: createdDate, complete: !currentlyComplete})
+
+        // Update the rest of the app with the rearranged list of data
+        switch (taskType) { // Used to update the data that the useEffect hook will be setting to the currentData when the screens are changed
             case "soon":
                 setSoonData(tempList);
                 break;
@@ -193,7 +221,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                         <Text>Edit the task here</Text>
                         <TextInput value={editTitle} onChangeText={onChangeEditTitle} placeholder="Task name" style={styles.input} />
                         <TextInput value={editDesc} onChangeText={onChangeEditDesc} placeholder="Task description" style={styles.input} />
-                        <Button title="Save Item" onPress={() => {editItem(); setEditModalVisible(!editModalVisible)}} />
+                        <Button title="Save Item" onPress={() => {editItem(editId); setEditModalVisible(!editModalVisible)}} />
                         <Pressable style={[styles.button, styles.buttonClose]} onPress={() => setEditModalVisible(!editModalVisible)}>
                             <Text style={styles.textStyle}>Close</Text>
                         </Pressable>
@@ -255,7 +283,6 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     card: {
-        backgroundColor: 'white',
         flex: 1,
         padding: 20,
         boxShadow: '1px 1px 6px gray;',
@@ -263,7 +290,6 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         marginHorizontal: 8,
         minWidth: 200
-
     },
     cardTitle: {
         fontSize: 20,
