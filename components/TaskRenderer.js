@@ -292,7 +292,10 @@ const styles = StyleSheet.create({
     card: {
         flex: 1,
         padding: 20,
-        boxShadow: '1px 1px 6px gray;',
+        shadowColor: 'gray',
+        shadowOffset: {width: 1, height: 1},
+        shadowRadius: 6,
+        shadowOpacity: 0.5,
         borderRadius: 15,
         marginVertical: 8,
         marginHorizontal: 8,
@@ -304,13 +307,12 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     cardDesc: {
-        fontSize: '1.1em'
+        fontSize: 15
     },  
     cardDate: {
         color: 'gray',
-        fontWeight: '350',
-        fontDecoration: 'italicized',
-        fontSize: '0.8em',
+        fontWeight: "300",
+        fontSize: 12,
         marginTop: 5,
         marginBottom: 15,
     },
