@@ -32,6 +32,13 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
     }, [soonData, laterData, eventuallyData, taskType])
 
     const renderItem = ({ item }) => { // For the FlatList component that renders each of the tasks based on what is in state (currentData)
+        let completeOrNot;
+        if (item.complete) {
+            completeOrNot = (<Icon name="close" style={styles.icon} size={25} color="#6C48EF" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
+        } else {
+            completeOrNot = (<Icon name="check" style={styles.icon} size={25} color="#6C48EF" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
+        }
+
         return (
             <View style={[{backgroundColor: item.complete ? '#00ff129e' : 'white'}, styles.card]}>
                 <Text style={styles.cardTitle}>{item.title}</Text>
@@ -40,7 +47,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                 <View style={styles.editButtons}>
                     <Icon name="edit" style={styles.icon} size={25} color="#6C48EF" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); setEditId(item.id) } } />
                     <Icon name="delete" style={styles.icon} size={25} color="#6C48EF" onPress={() => deleteTask(item.id)} />
-                    <Icon name="check" style={styles.icon} size={25} color="#6C48EF" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn)} />
+                    {completeOrNot}
                 </View>
             </View>
         )
