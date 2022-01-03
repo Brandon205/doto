@@ -21,6 +21,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
     const [editId, setEditId] = useState("");
 
     useEffect(() => { // This will get all of the data at the start when the app is opened and whenever a user switches screens
+        console.log(soonData, laterData, eventuallyData)
         getAllData()
         if (taskType === 'soon') {
             setCurrentData(soonData)
@@ -29,7 +30,11 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         } else if (taskType === 'eventually') {
             setCurrentData(eventuallyData)
         }
-    }, [soonData, laterData, eventuallyData, taskType])
+
+        console.log(soonData, laterData, eventuallyData)
+    }, [taskType])
+
+    // soonData, laterData, eventuallyData,
 
     const renderItem = ({ item }) => { // For the FlatList component that renders each of the tasks based on what is in state (currentData)
         let completeOrNot;
@@ -54,10 +59,13 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
     }
 
     const addItem= async () => { // Uses the data from the inputs that is stored in state to create a new task for the current taskType, and pushes that to Async storage
-        let tempJson;
+        let tempJson = [];
+        let dataCopy;
         if (taskType === 'soon') {
-            let dataCopy = soonData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
+            dataCopy = soonData
+            dataCopy = dataCopy.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
+            console.log('tempJson', tempJson)
         } else if (taskType === 'later') {
             let dataCopy = laterData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
@@ -74,6 +82,8 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         } catch (error) {
             console.log(error)
         }
+
+        dataCopy = [];
     }
 
     let removeItem = (itemId) => { // Will use the currentData from state to remove one of the items based on the itemId that is passed in (used in editItem() and removeItem())
@@ -184,22 +194,48 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
 
     const getAllData = async () => { // Used in the useEffect hook to make sure the data is updated and accurate
         try {
-            let soonValue = await AsyncStorage.getItem('@soon')
+            let soonValue = await AsyncStorage.getItem('soon')
             if (soonValue !== null) {
                 console.log(soonValue)
                 setSoonData(JSON.parse(soonValue))
+            } else { // There is no currently stored soon data
+                setSoonData([])
             }
-            let laterValue = await AsyncStorage.getItem('@later')
+            let laterValue = await AsyncStorage.getItem('later')
             if (laterValue !== null) {
                 setLaterData(JSON.parse(laterValue))
+            } else { // There is no currently stored later data
+                setLaterData([])
             }
-            let eventuallyValue = await AsyncStorage.getItem('@eventually')
+            let eventuallyValue = await AsyncStorage.getItem('eventually')
             if (eventuallyValue !== null) {
                 setEventuallyData(JSON.parse(eventuallyValue))
+            } else { // There is no currently stored eventually data
+                setEventuallyData([])
             }
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const tempReset = async () => {
+        try {
+            await AsyncStorage.removeItem('soon')
+            console.log('reset Soon')
+          } catch(e) {
+            console.log(e)
+          }
+          try {
+            await AsyncStorage.removeItem('later')
+          } catch(e) {
+            console.log(e)
+          }
+          try {
+            await AsyncStorage.removeItem('eventually')
+          } catch(e) {
+            console.log(e)
+          }
+          getAllData()
     }
 
     return (
@@ -208,6 +244,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                 <Button title="Soon" onPress={() => setTaskType("soon")} color={taskType === "soon" ? 'green' : 'blue'} />
                 <Button title="Later" onPress={() => setTaskType("later")} color={taskType === "later" ? 'green' : 'blue'} />
                 <Button title="Eventually" onPress={() => setTaskType("eventually")} color={taskType === "eventually" ? 'green' : 'blue'} />
+                <Button title="RESET" onPress={() => {tempReset(); setTaskType("soon")}} />
             </View>
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(!modalVisible)} >
                 <View style={styles.centeredView}>
