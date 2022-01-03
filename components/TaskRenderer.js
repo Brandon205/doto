@@ -122,7 +122,6 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                 break;
             default:
                 console.log('Error setting state');
-                break;
         }
 
         tempList = JSON.stringify(tempList)
@@ -150,7 +149,6 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                 break;
             default:
                 console.log('Error setting state');
-                break;
         }
 
         tempList = JSON.stringify(tempList)
@@ -180,7 +178,6 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                 break;
             default:
                 console.log('Error setting state');
-                break;
         }
 
         tempList = JSON.stringify(tempList)
@@ -218,7 +215,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         }
     }
 
-    const tempReset = async () => {
+    const tempReset = async () => { // TODO: DELETE THIS, just for resetting all stored data when the app corrupts it with 1's somehow
         try {
             await AsyncStorage.removeItem('soon')
             console.log('reset Soon')
