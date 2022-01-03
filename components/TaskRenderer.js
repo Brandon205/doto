@@ -5,7 +5,6 @@ import { v4 as uuid } from 'uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-
 export default function TaskRenderer() { // Renders the whole app and handles most of the app as well
     const [taskType, setTaskType] = useState('soon');
     const [modalVisible, setModalVisible] = useState(false);
@@ -29,7 +28,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         } else if (taskType === 'eventually') {
             setCurrentData(eventuallyData)
         }
-    }, [taskType])
+    }, [taskType, currentData])
 
     const renderItem = ({ item }) => { // For the FlatList component that renders each of the tasks based on what is in state (currentData)
         let completeOrNot;
@@ -53,7 +52,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         )
     }
 
-    const addItem= async () => { // Uses the data from the inputs that is stored in state to create a new task for the current taskType, and pushes that to Async storage
+    const addItem = async () => { // Uses the data from the inputs that is stored in state to create a new task for the current taskType, and pushes that to Async storage
         let tempJson = [];
         let dataCopy;
         if (taskType === 'soon') {
@@ -61,13 +60,16 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
             dataCopy.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
         } else if (taskType === 'later') {
-            let dataCopy = laterData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
+            dataCopy = laterData
+            dataCopy.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
         } else if (taskType === 'eventually') {
-            let dataCopy = eventuallyData.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
+            dataCopy = eventuallyData
+            dataCopy.push({id: uuid(), title: title, desc: desc, createdOn: new Date().toDateString(), complete: false})
             tempJson = JSON.stringify(dataCopy)
         }
 
+        setCurrentData(dataCopy)
         onChangeTitle("");
         onChangeDesc("");
 
@@ -96,6 +98,9 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         let [tempList, index] = removeItem(itemId)
 
         tempList.splice(index, 0, {id: itemId, title: editTitle, desc: editDesc, createdOn: new Date().toDateString(), complete: false})
+
+        // Setting the current data will update the state so that the items refresh
+        setCurrentData(tempList)
         
         // Clear editTitle and editDesc here
         onChangeEditDesc("");
@@ -157,6 +162,9 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
 
         tempList.push({id: itemId, title: itemTitle, desc: itemDesc, createdOn: createdDate, complete: !currentlyComplete})
 
+        // Setting the current data will update the state so that the items refresh
+        setCurrentData(tempList)
+
         // Update the rest of the app with the rearranged list of data
         switch (taskType) { // Used to update the data that the useEffect hook will be setting to the currentData when the screens are changed
             case "soon":
@@ -204,26 +212,6 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         } catch (error) {
             console.log(error)
         }
-    }
-
-    const tempReset = async () => { // TODO: DELETE THIS, just for resetting all stored data when the app corrupts it with 1's somehow
-        try {
-            await AsyncStorage.removeItem('soon')
-            console.log('reset Soon')
-          } catch(e) {
-            console.log(e)
-          }
-          try {
-            await AsyncStorage.removeItem('later')
-          } catch(e) {
-            console.log(e)
-          }
-          try {
-            await AsyncStorage.removeItem('eventually')
-          } catch(e) {
-            console.log(e)
-          }
-          getAllData()
     }
 
     return (
