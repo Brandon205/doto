@@ -220,7 +220,6 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                 <Button title="Soon" onPress={() => setTaskType("soon")} color={taskType === "soon" ? 'green' : 'blue'} />
                 <Button title="Later" onPress={() => setTaskType("later")} color={taskType === "later" ? 'green' : 'blue'} />
                 <Button title="Eventually" onPress={() => setTaskType("eventually")} color={taskType === "eventually" ? 'green' : 'blue'} />
-                <Button title="RESET" onPress={() => {tempReset(); setTaskType("soon")}} />
             </View>
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(!modalVisible)} >
                 <View style={styles.centeredView}>
