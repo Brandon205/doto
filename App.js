@@ -16,10 +16,14 @@ export default function App() {
 const styles = StyleSheet.create({
   navBar: {
     width: Dimensions.get('window').width,
-    height: 50,
+    height: 100,
+    flex: 1,
+    alignItems: 'center',
     backgroundColor: 'gray'
   },
   name: {
-    fontSize: 25
+    fontSize: 40,
+    fontWeight: 'bold',
+    padding: 5
   }
 })
