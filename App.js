@@ -15,17 +15,16 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%'
+    minHeight: '100%'
   },
   navBar: {
     width: Dimensions.get('window').width,
-    maxHeight: '100',
-    flex: 1,
-    alignItems: 'center',
+    alignItems: 'space-around',
     backgroundColor: 'gray'
   },
   name: {
     fontSize: 40,
+    paddingLeft: 33,
     fontWeight: 'bold',
     padding: 5
   }

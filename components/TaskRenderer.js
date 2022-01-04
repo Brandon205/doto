@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Dimensions, Modal, TextInput, Pressable, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Button, Modal, TextInput, FlatList, Pressable } from 'react-native';
 import 'react-native-get-random-values';
 import { v4 as uuid } from 'uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import GestureRecognizer from 'react-native-swipe-gestures';
 
 export default function TaskRenderer() { // Renders the whole app and handles most of the app as well
-    const [taskType, setTaskType] = useState('soon');
+    const [taskType, setTaskType] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [currentData, setCurrentData] = useState([]);
@@ -22,6 +22,9 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
 
     useEffect(() => { // This will get all of the data at the start when the app is opened and whenever a user switches screens
         getAllData()
+        if (taskType === '') { // Updates data on initial render after content has been fetched
+            setTaskType('soon')
+        }
         if (taskType === 'soon') {
             setCurrentData(soonData)
         } else if (taskType === 'later') {
@@ -34,9 +37,9 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
     const renderItem = ({ item }) => { // For the FlatList component that renders each of the tasks based on what is in state (currentData)
         let completeOrNot;
         if (item.complete) {
-            completeOrNot = (<Icon name="close" style={styles.icon} size={25} color="#6C48EF" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
+            completeOrNot = (<Icon name="close" style={styles.icon} size={25} color="#6800F4" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
         } else {
-            completeOrNot = (<Icon name="check" style={styles.icon} size={25} color="#6C48EF" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
+            completeOrNot = (<Icon name="check" style={styles.icon} size={25} color="#6800F4" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
         }
 
         return (
@@ -45,8 +48,8 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                 <Text style={styles.cardDescs}>{item.desc}</Text>
                 <Text style={styles.cardDate }>{item.createdOn}</Text>
                 <View style={styles.editButtons}>
-                    <Icon name="edit" style={styles.icon} size={25} color="#6C48EF" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); setEditId(item.id) } } />
-                    <Icon name="delete" style={styles.icon} size={25} color="#6C48EF" onPress={() => deleteTask(item.id)} />
+                    <Icon name="file-edit" style={styles.icon} size={25} color="#6800F4" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); setEditId(item.id) } } />
+                    <Icon name="delete" style={styles.icon} size={25} color="#6800F4" onPress={() => deleteTask(item.id)} />
                     {completeOrNot}
                 </View>
             </View>
@@ -236,11 +239,24 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
 
     return (
         <GestureRecognizer style={styles.container} onSwipeRight={(gestureState) => scrollRight()} onSwipeLeft={(gestureState) => scrollLeft()}>
-            <View style={styles.inline}>
-                <Button title="Soon" onPress={() => setTaskType("soon")} color={taskType === "soon" ? 'green' : 'blue'} />
-                <Button title="Later" onPress={() => setTaskType("later")} color={taskType === "later" ? 'green' : 'blue'} />
-                <Button title="Eventually" onPress={() => setTaskType("eventually")} color={taskType === "eventually" ? 'green' : 'blue'} />
+            <View style={styles.topNav}>
+                <Pressable onPress={() => setTaskType("soon")} style={styles.navButton}>
+                    <Icon name="clock-alert" style={styles.icon} size={25} color={taskType === "soon" ? '#F2E6FF' : '#B98BF8'} />
+                    <Text style={{color: taskType === "soon" ? '#F2E6FF' : '#B98BF8', fontSize: 20}}>Soon</Text>
+                </Pressable>
+                <Pressable onPress={() => setTaskType("later")} style={styles.navButton}>
+                    <Icon name="clock-time-four" style={styles.icon} size={25} color={taskType === "later" ? '#F2E6FF' : '#B98BF8'} />
+                    <Text style={{color: taskType === "later" ? '#F2E6FF' : '#B98BF8', fontSize: 20}}>Later</Text>
+                </Pressable>
+                <Pressable onPress={() => setTaskType("eventually")} style={styles.navButton}>
+                    <Icon name="clock-time-eight" style={styles.icon} size={25} color={taskType === "eventually" ? '#F2E6FF' : '#B98BF8'} />
+                    <Text style={{color: taskType === "eventually" ? '#F2E6FF' : '#B98BF8', fontSize: 20}}>Eventually</Text>
+                </Pressable>
             </View>
+            <Text style={styles.tasksHeader}>{taskType.toUpperCase()} TASKS</Text>
+            <Pressable style={styles.createButton} onPressIn={() => setModalVisible(!modalVisible)}>
+                <Icon name="plus" style={styles.icon} size={25} color="#F2E6FF" onPress={() => deleteTask(item.id)} />
+            </Pressable>
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(!modalVisible)} >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
@@ -267,24 +283,30 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                     </View>
                 </View>
             </Modal>
-            <Text>Current {taskType} Tasks:</Text>
             <FlatList data={currentData} renderItem={renderItem} keyExtractor={(item) => item.id} />
-            <Button title="Add new task" onPress={() => setModalVisible(!modalVisible)} />
         </GestureRecognizer>
     )
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/white: #F2E6FF
     container: {
         display: 'flex',
         backgroundColor: 'whitesmoke',
         width: "100%",
+        height: '100%',
         alignItems: 'center',
     },
-    inline: {
-        display: 'flex',
+    topNav: {
+        top: 0,
+        backgroundColor: '#6800F4',
+        width: '100%',
         flexDirection: 'row',
-        alignContent: 'space-between'
+        justifyContent: 'space-around',
+        alignItems: 'center',
+    },
+    navButton: {
+        display: 'inline-block',
+        padding: 5
     },
     centeredView: {
         flex: 1,
@@ -307,6 +329,14 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5
     },
+    createButton: {
+        backgroundColor: '#6800F4',
+        borderRadius: '50%',
+        padding: 9
+    },  
+    tasksHeader: {
+        fontSize: 20
+    }, 
     input: {
         height: 40,
         margin: 12,
@@ -352,7 +382,6 @@ const styles = StyleSheet.create({
         display: 'flex',
         flex: 1,
         justifyContent: 'center',
-        color: '#6C48EF',
         padding: '0 20 0 20'
     },
     editButtons: {
