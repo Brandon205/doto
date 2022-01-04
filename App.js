@@ -1,16 +1,25 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import TaskRenderer from './components/TaskRenderer';
-
-const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerStyle: {backgroundColor: '#19191B'}, headerTintColor: '#fff', headerTitleAlign: 'center', headerTitleStyle: {fontSize: 24, fontWeight: 'bold'}}}screenOptions={{headerStyle: {backgroundColor: '#19191B'}, headerTintColor: '#fff', headerTitleAlign: 'center', headerTitleStyle: {fontSize: 24, fontWeight: 'bold'}}}>
-        <Stack.Screen name="Doto" component={TaskRenderer} options={{ title: 'TaskRenderer' }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <View>
+      <View style={styles.navBar}>
+        <Text style={styles.name}>Doto</Text>
+      </View>
+      <TaskRenderer />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  navBar: {
+    width: Dimensions.get('window').width,
+    height: 50,
+    backgroundColor: 'gray'
+  },
+  name: {
+    fontSize: 25
+  }
+})
