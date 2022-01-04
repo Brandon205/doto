@@ -13,8 +13,8 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
     const [soonData, setSoonData] = useState([]);
     const [laterData, setLaterData] = useState([]);
     const [eventuallyData, setEventuallyData] = useState([]);
-    const [title, onChangeTitle] = useState("Testing");
-    const [desc, onChangeDesc] = useState("Testing");
+    const [title, onChangeTitle] = useState("");
+    const [desc, onChangeDesc] = useState("");
     const [editTitle, onChangeEditTitle] = useState("");
     const [editDesc, onChangeEditDesc] = useState("");
     const [editId, setEditId] = useState("");
