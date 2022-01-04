@@ -4,6 +4,7 @@ import 'react-native-get-random-values';
 import { v4 as uuid } from 'uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import GestureRecognizer from 'react-native-swipe-gestures';
 
 export default function TaskRenderer() { // Renders the whole app and handles most of the app as well
     const [taskType, setTaskType] = useState('soon');
@@ -214,8 +215,27 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         }
     }
 
+    let scrollLeft = () => { // User wants page to go to the right ("soon" > "later")
+        if (taskType === 'soon') {
+            setTaskType('later');
+            setCurrentData(laterData);
+        } else if (taskType === 'later') {
+            setTaskType('eventually');
+            setCurrentData(eventuallyData);
+        }
+    }
+    let scrollRight = () => { // User wants page to go to the left ("later" > "soon")
+        if (taskType === 'later') {
+            setTaskType('soon');
+            setCurrentData(soonData);
+        } else if (taskType === 'eventually') {
+            setTaskType('later');
+            setCurrentData(laterData);
+        }
+    }
+
     return (
-        <View style={styles.container}>
+        <GestureRecognizer style={styles.container} onSwipeRight={(gestureState) => scrollRight()} onSwipeLeft={(gestureState) => scrollLeft()}>
             <View style={styles.inline}>
                 <Button title="Soon" onPress={() => setTaskType("soon")} color={taskType === "soon" ? 'green' : 'blue'} />
                 <Button title="Later" onPress={() => setTaskType("later")} color={taskType === "later" ? 'green' : 'blue'} />
@@ -250,7 +270,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
             <Text>Current {taskType} Tasks:</Text>
             <FlatList data={currentData} renderItem={renderItem} keyExtractor={(item) => item.id} />
             <Button title="Add new task" onPress={() => setModalVisible(!modalVisible)} />
-        </View>
+        </GestureRecognizer>
     )
 }
 
@@ -258,7 +278,7 @@ const styles = StyleSheet.create({
     container: {
         display: 'flex',
         backgroundColor: 'whitesmoke',
-        width: Dimensions.get("window").width,
+        width: "100%",
         alignItems: 'center',
     },
     inline: {
@@ -302,7 +322,7 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     card: {
-        flex: 1,
+        alignItems: 'center',
         padding: 20,
         shadowColor: 'gray',
         shadowOffset: {width: 1, height: 1},
@@ -332,7 +352,8 @@ const styles = StyleSheet.create({
         display: 'flex',
         flex: 1,
         justifyContent: 'center',
-        color: '#6C48EF'
+        color: '#6C48EF',
+        padding: '0 20 0 20'
     },
     editButtons: {
         display: 'flex',
