@@ -37,9 +37,9 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
     const renderItem = ({ item }) => { // For the FlatList component that renders each of the tasks based on what is in state (currentData)
         let completeOrNot;
         if (item.complete) {
-            completeOrNot = (<Icon name="close" style={styles.icon} size={25} color="#6800F4" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
+            completeOrNot = (<Icon name="close" style={styles.icon} size={35} color="#6800F4" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
         } else {
-            completeOrNot = (<Icon name="check" style={styles.icon} size={25} color="#6800F4" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
+            completeOrNot = (<Icon name="check" style={styles.icon} size={35} color="#6800F4" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
         }
 
         return (
@@ -48,8 +48,8 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                 <Text style={styles.cardDescs}>{item.desc}</Text>
                 <Text style={styles.cardDate }>{item.createdOn}</Text>
                 <View style={styles.editButtons}>
-                    <Icon name="file-edit" style={styles.icon} size={25} color="#6800F4" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); setEditId(item.id) } } />
-                    <Icon name="delete" style={styles.icon} size={25} color="#6800F4" onPress={() => deleteTask(item.id)} />
+                    <Icon name="file-edit" style={styles.icon} size={35} color="#6800F4" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); setEditId(item.id) } } />
+                    <Icon name="delete" style={styles.icon} size={35} color="#6800F4" onPress={() => deleteTask(item.id)} />
                     {completeOrNot}
                 </View>
             </View>
@@ -291,9 +291,6 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
 const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/white: #F2E6FF
     container: {
         display: 'flex',
-        backgroundColor: 'whitesmoke',
-        width: "100%",
-        height: '100%',
         alignItems: 'center',
     },
     topNav: {
@@ -305,8 +302,9 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
         alignItems: 'center',
     },
     navButton: {
-        display: 'inline-block',
-        padding: 5
+        display: 'flex',
+        alignItems: 'center',
+        width: 100
     },
     centeredView: {
         flex: 1,
@@ -335,7 +333,8 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
         padding: 9
     },  
     tasksHeader: {
-        fontSize: 20
+        fontSize: 20,
+        padding: 12
     }, 
     input: {
         height: 40,

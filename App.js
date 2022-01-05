@@ -19,12 +19,12 @@ const styles = StyleSheet.create({
   },
   navBar: {
     width: Dimensions.get('window').width,
-    alignItems: 'space-around',
-    backgroundColor: 'gray'
+    alignItems: 'center',
+    backgroundColor: '#6800F4'
   },
   name: {
+    color: '#F2E6FF',
     fontSize: 40,
-    paddingLeft: 33,
     fontWeight: 'bold',
     padding: 5
   }
