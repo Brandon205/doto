@@ -1,24 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import TaskRenderer from './components/TaskRenderer';
 
 export default function App() {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.navBar}>
         <Text style={styles.name}>Doto</Text>
       </View>
       <TaskRenderer />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    minHeight: '100%'
+    flex: 1,
+    minHeight: '100%',
   },
   navBar: {
-    width: Dimensions.get('window').width,
+    width: '100%',
     alignItems: 'center',
     backgroundColor: '#6800F4'
   },

@@ -37,9 +37,9 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
     const renderItem = ({ item }) => { // For the FlatList component that renders each of the tasks based on what is in state (currentData)
         let completeOrNot;
         if (item.complete) {
-            completeOrNot = (<Icon name="close" style={styles.icon} size={35} color="#6800F4" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
+            completeOrNot = (<Icon name="close" style={styles.cardIcon} size={35} color="#6800F4" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
         } else {
-            completeOrNot = (<Icon name="check" style={styles.icon} size={35} color="#6800F4" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
+            completeOrNot = (<Icon name="check" style={styles.cardIcon} size={35} color="#6800F4" onPress={() => completeTask(item.id, item.title, item.desc, item.createdOn, item.complete)} />)
         }
 
         return (
@@ -48,8 +48,8 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                 <Text style={styles.cardDescs}>{item.desc}</Text>
                 <Text style={styles.cardDate }>{item.createdOn}</Text>
                 <View style={styles.editButtons}>
-                    <Icon name="file-edit" style={styles.icon} size={35} color="#6800F4" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); setEditId(item.id) } } />
-                    <Icon name="delete" style={styles.icon} size={35} color="#6800F4" onPress={() => deleteTask(item.id)} />
+                    <Icon name="file-edit" style={styles.cardIcon} size={35} color="#6800F4" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); setEditId(item.id) } } />
+                    <Icon name="delete" style={styles.cardIcon} size={35} color="#6800F4" onPress={() => deleteTask(item.id)} />
                     {completeOrNot}
                 </View>
             </View>
@@ -255,7 +255,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
             </View>
             <Text style={styles.tasksHeader}>{taskType.toUpperCase()} TASKS</Text>
             <Pressable style={styles.createButton} onPressIn={() => setModalVisible(!modalVisible)}>
-                <Icon name="plus" style={styles.icon} size={25} color="#F2E6FF" onPress={() => deleteTask(item.id)} />
+                <Icon name="plus" style={styles.icon} size={25} color="#F2E6FF" onPress={() => setModalVisible(!modalVisible)} />
             </Pressable>
             <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(!modalVisible)} >
                 <View style={styles.centeredView}>
@@ -263,9 +263,11 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                         <Text>Add a new {taskType} task here</Text>
                         <TextInput value={title} onChangeText={onChangeTitle} placeholder="Task name" style={styles.input} />
                         <TextInput value={desc} onChangeText={onChangeDesc} placeholder="Task description" style={styles.input} />
-                        <Button title="Add Item" onPress={() => {addItem(); setModalVisible(!modalVisible)}} />
+                        <Pressable style={[styles.button, styles.buttonClose]} onPress={() => {addItem(); setModalVisible(!modalVisible)}}>
+                            <Text style={{color: '#F2E6FF', padding: 5}}>Add Item</Text>
+                        </Pressable>
                         <Pressable style={[styles.button, styles.buttonClose]} onPress={() => setModalVisible(!modalVisible)}>
-                            <Text style={styles.textStyle}>Close</Text>
+                            <Text style={{color: '#F2E6FF', padding: 5}}>Close</Text>
                         </Pressable>
                     </View>
                 </View>
@@ -276,14 +278,18 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                         <Text>Edit the task here</Text>
                         <TextInput value={editTitle} onChangeText={onChangeEditTitle} placeholder="Task name" style={styles.input} />
                         <TextInput value={editDesc} onChangeText={onChangeEditDesc} placeholder="Task description" style={styles.input} />
-                        <Button title="Save Item" onPress={() => {editItem(editId); setEditModalVisible(!editModalVisible)}} />
+                        <Pressable style={[styles.button, styles.buttonClose]} onPress={() => {editItem(editId); setEditModalVisible(!editModalVisible)}}>
+                            <Text style={{color: '#F2E6FF'}}>Save Changes</Text>
+                        </Pressable>
                         <Pressable style={[styles.button, styles.buttonClose]} onPress={() => setEditModalVisible(!editModalVisible)}>
-                            <Text style={styles.textStyle}>Close</Text>
+                            <Text style={{color: '#F2E6FF'}}>Cancel</Text>
                         </Pressable>
                     </View>
                 </View>
             </Modal>
-            <FlatList data={currentData} renderItem={renderItem} keyExtractor={(item) => item.id} />
+            <View style={{flex: 1, width: '100%'}}>
+                <FlatList data={currentData} renderItem={renderItem} keyExtractor={(item) => item.id} />
+            </View>
         </GestureRecognizer>
     )
 }
@@ -291,6 +297,8 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
 const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/white: #F2E6FF
     container: {
         display: 'flex',
+        minWidth: '100%',
+        minHeight: '100%',
         alignItems: 'center',
     },
     topNav: {
@@ -329,7 +337,7 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
     },
     createButton: {
         backgroundColor: '#6800F4',
-        borderRadius: '50%',
+        borderRadius: 25,
         padding: 9
     },  
     tasksHeader: {
@@ -351,9 +359,12 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
         marginTop: 10
     },
     card: {
-        alignItems: 'center',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        width: '90%',
         padding: 20,
-        shadowColor: 'gray',
+        elevation: 1,
+        shadowColor: '#000',
         shadowOffset: {width: 1, height: 1},
         shadowRadius: 6,
         shadowOpacity: 0.5,
@@ -377,16 +388,21 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
         marginTop: 5,
         marginBottom: 15,
     },
+    cardIcon: {
+        paddingLeft: 20,
+        paddingRight: 20
+    },
     icon: {
         display: 'flex',
-        flex: 1,
         justifyContent: 'center',
-        padding: '0 20 0 20'
     },
     editButtons: {
         display: 'flex',
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    buttonClose: {
+        backgroundColor: '#6800F4',
     }
 })
