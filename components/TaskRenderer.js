@@ -294,16 +294,22 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
     )
 }
 
+// Original Colors: Purple: #6800F4, Gray: #B98BF8, Selected/White: #F2E6FF
+const purple = "#6800F4"
+const gray = "#a3a3a3"
+// const selectedWhite = "#F2E6FF"
+
 const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/white: #F2E6FF
     container: {
         display: 'flex',
         minWidth: '100%',
         minHeight: '100%',
         alignItems: 'center',
+        paddingBottom: 100
     },
     topNav: {
         top: 0,
-        backgroundColor: '#6800F4',
+        backgroundColor: purple,
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-around',
@@ -336,7 +342,7 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
         elevation: 5
     },
     createButton: {
-        backgroundColor: '#6800F4',
+        backgroundColor: purple,
         borderRadius: 25,
         padding: 9
     },  
@@ -382,8 +388,9 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
         fontSize: 15
     },  
     cardDate: {
-        color: 'gray',
+        color: gray,
         fontWeight: "300",
+        fontStyle: 'italic',
         fontSize: 12,
         marginTop: 5,
         marginBottom: 15,
@@ -399,10 +406,11 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
     editButtons: {
         display: 'flex',
         flex: 1,
+        width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
     },
     buttonClose: {
-        backgroundColor: '#6800F4',
+        backgroundColor: purple,
     }
 })
