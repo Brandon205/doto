@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Modal, TextInput, FlatList, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Modal, TextInput, FlatList, Pressable } from 'react-native';
 import 'react-native-get-random-values';
 import { v4 as uuid } from 'uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -367,11 +367,13 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
     card: {
         marginLeft: 'auto',
         marginRight: 'auto',
-        width: '90%',
+        display: 'flex',
+        alignItems: 'center',
+        width: '80%',
         padding: 20,
         elevation: 1,
         shadowColor: '#000',
-        shadowOffset: {width: 1, height: 1},
+        shadowOffset: {width: 2, height: 2},
         shadowRadius: 6,
         shadowOpacity: 0.5,
         borderRadius: 15,
@@ -380,7 +382,7 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
         minWidth: 200
     },
     cardTitle: {
-        fontSize: 20,
+        fontSize: 25,
         fontWeight: 'bold',
         marginBottom: 10
     },
@@ -391,7 +393,7 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
         color: gray,
         fontWeight: "300",
         fontStyle: 'italic',
-        fontSize: 12,
+        fontSize: 14,
         marginTop: 5,
         marginBottom: 15,
     },
@@ -406,7 +408,6 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
     editButtons: {
         display: 'flex',
         flex: 1,
-        width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
     },
