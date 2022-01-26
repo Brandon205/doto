@@ -22,9 +22,10 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
 
     useEffect(() => { // This will get all of the data at the start when the app is opened and whenever a user switches screens
         getAllData()
-        if (taskType === '') { // Updates data on initial render after content has been fetched
+        if (taskType === '') { // Should update data on initial render after content has been fetched
             setTaskType('soon')
         }
+
         if (taskType === 'soon') {
             setCurrentData(soonData)
         } else if (taskType === 'later') {
@@ -45,7 +46,8 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         return (
             <View style={[{backgroundColor: item.complete ? '#00ff129e' : 'white'}, styles.card]}>
                 <Text style={styles.cardTitle}>{item.title}</Text>
-                <Text style={styles.cardDescs}>{item.desc}</Text>
+                <View style={styles.hr}></View>
+                <Text style={styles.cardDesc}>{item.desc}</Text>
                 <Text style={styles.cardDate }>{item.createdOn}</Text>
                 <View style={styles.editButtons}>
                     <Icon name="file-edit" style={styles.cardIcon} size={35} color="#6800F4" onPress={() => { setEditModalVisible(true); onChangeEditTitle(item.title); onChangeEditDesc(item.desc); setEditId(item.id) } } />
@@ -386,15 +388,20 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
         fontWeight: 'bold',
         marginBottom: 10
     },
+    hr: {
+        width: '100%',
+        borderBottomColor: '#000',
+        borderBottomWidth: 1
+    },
     cardDesc: {
-        fontSize: 15
+        fontSize: 18,
+        marginTop: 25,
+        marginBottom: 15
     },  
     cardDate: {
         color: gray,
         fontWeight: "300",
-        fontStyle: 'italic',
         fontSize: 14,
-        marginTop: 5,
         marginBottom: 15,
     },
     cardIcon: {
