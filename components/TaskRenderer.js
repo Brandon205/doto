@@ -6,13 +6,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import GestureRecognizer from 'react-native-swipe-gestures';
 
-const wait = (timeout) => {
+const wait = (timeout) => { // TODO: remove/edit to make this happen on start
     return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
 export default function TaskRenderer() { // Renders the whole app and handles most of the app as well
     const [taskType, setTaskType] = useState('');
-    const [refreshing, setRefreshing] = useState(false);
+    const [refreshing, setRefreshing] = useState(false); // TODO: remove/edit to make this happen on start
     const [modalVisible, setModalVisible] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [currentData, setCurrentData] = useState([]);
@@ -245,7 +245,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
         }
     }
 
-    const onRefresh = React.useCallback(() => {
+    const onRefresh = React.useCallback(() => { // TODO: remove/edit to make this happen on start
         setRefreshing(true);
         setTaskType(taskType);
         setCurrentData(currentData);
