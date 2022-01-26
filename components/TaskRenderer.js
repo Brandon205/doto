@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Modal, TextInput, FlatList, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Modal, TextInput, FlatList, Pressable, RefreshControl } from 'react-native';
 import 'react-native-get-random-values';
 import { v4 as uuid } from 'uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import GestureRecognizer from 'react-native-swipe-gestures';
 
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
+
 export default function TaskRenderer() { // Renders the whole app and handles most of the app as well
     const [taskType, setTaskType] = useState('');
+    const [refreshing, setRefreshing] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
     const [currentData, setCurrentData] = useState([]);
@@ -229,6 +234,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
             setCurrentData(eventuallyData);
         }
     }
+
     let scrollRight = () => { // User wants page to go to the left ("later" > "soon")
         if (taskType === 'later') {
             setTaskType('soon');
@@ -238,6 +244,13 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
             setCurrentData(laterData);
         }
     }
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTaskType(taskType);
+        setCurrentData(currentData);
+        wait(1500).then(() => setRefreshing(false));
+      }, []);
 
     return (
         <GestureRecognizer style={styles.container} onSwipeRight={(gestureState) => scrollRight()} onSwipeLeft={(gestureState) => scrollLeft()}>
@@ -290,7 +303,7 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
                 </View>
             </Modal>
             <View style={{flex: 1, width: '100%'}}>
-                <FlatList data={currentData} renderItem={renderItem} keyExtractor={(item) => item.id} />
+                <FlatList data={currentData} renderItem={renderItem} keyExtractor={(item) => item.id} onRefresh={onRefresh} refreshing={refreshing} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} />
             </View>
         </GestureRecognizer>
     )
