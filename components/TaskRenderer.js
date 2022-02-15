@@ -305,6 +305,9 @@ export default function TaskRenderer() { // Renders the whole app and handles mo
             <View style={{flex: 1, width: '100%'}}>
                 <FlatList data={currentData} renderItem={renderItem} keyExtractor={(item) => item.id} onRefresh={onRefresh} refreshing={refreshing} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} />
             </View>
+            <View style={styles.cornerRibbon}>
+                <Text style={styles.bannerText} onPress={() => handlePress()}>Github</Text>
+            </View>
         </GestureRecognizer>
     )
 }
@@ -400,6 +403,21 @@ const styles = StyleSheet.create({ // purple: #6800F4, gray: #B98BF8, selected/w
         fontSize: 25,
         fontWeight: 'bold',
         marginBottom: 10
+    },
+    cornerRibbon: {
+        backgroundColor: '#FF6300',
+        position: 'absolute',
+        bottom: 100,
+        left: 0,
+        zIndex: 1,
+        borderBottomRightRadius: 25,
+        borderTopRightRadius: 25
+    },
+    bannerText: {
+        color: 'white',
+        textAlign: 'center',
+        width: 120,
+        padding: 10,
     },
     hr: {
         width: '100%',
