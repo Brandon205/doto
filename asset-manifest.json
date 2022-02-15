@@ -1,11 +1,11 @@
 {
   "files": {
-    "app.js": "/doto/static/js/app.f4007177.chunk.js",
-    "app.js.map": "/doto/static/js/app.f4007177.chunk.js.map",
+    "app.js": "/doto/static/js/app.70fdd028.chunk.js",
+    "app.js.map": "/doto/static/js/app.70fdd028.chunk.js.map",
     "runtime~app.js": "/doto/static/js/runtime~app.1929df46.js",
     "runtime~app.js.map": "/doto/static/js/runtime~app.1929df46.js.map",
-    "static/js/2.f772cdab.chunk.js": "/doto/static/js/2.f772cdab.chunk.js",
-    "static/js/2.f772cdab.chunk.js.map": "/doto/static/js/2.f772cdab.chunk.js.map",
+    "static/js/2.05081a1a.chunk.js": "/doto/static/js/2.05081a1a.chunk.js",
+    "static/js/2.05081a1a.chunk.js.map": "/doto/static/js/2.05081a1a.chunk.js.map",
     "fonts/MaterialCommunityIcons.ttf": "/doto/./fonts/MaterialCommunityIcons.ttf",
     "favicon-16.png": "/doto/favicon-16.png",
     "favicon-32.png": "/doto/favicon-32.png",
@@ -13,11 +13,11 @@
     "index.html": "/doto/index.html",
     "manifest.json": "/doto/manifest.json",
     "serve.json": "/doto/serve.json",
-    "static/js/2.f772cdab.chunk.js.LICENSE.txt": "/doto/static/js/2.f772cdab.chunk.js.LICENSE.txt"
+    "static/js/2.05081a1a.chunk.js.LICENSE.txt": "/doto/static/js/2.05081a1a.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime~app.1929df46.js",
-    "static/js/2.f772cdab.chunk.js",
-    "static/js/app.f4007177.chunk.js"
+    "static/js/2.05081a1a.chunk.js",
+    "static/js/app.70fdd028.chunk.js"
   ]
 }
